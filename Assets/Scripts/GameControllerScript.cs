@@ -26,6 +26,7 @@ public class GameControllerScript : MonoBehaviour
     private double timeSpentInState = 0.0f;
     bool isFadeInFromBlack = true;
     public float fadeInSpeed = 2.0f;
+    public AudioSource winAudio;
 
     public void Start()
     {
@@ -104,6 +105,7 @@ public class GameControllerScript : MonoBehaviour
         timeSpentInState = 0.0;
         gameState = GameState.LevelFinished;
         levelFinishScreen.SetActive(true);
+        winAudio.Play();
         Debug.Log("Level finished.");
     }
 
