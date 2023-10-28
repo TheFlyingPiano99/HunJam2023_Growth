@@ -14,16 +14,18 @@ public class GameControllerScript : MonoBehaviour
         GameOver,
         GamePaused,
         GameRunning,
-        LevelFinished
+        LevelFinished,
     }
 
     private GameObject player;
     public GameObject gameOverScreen;
     public GameObject levelFinishScreen;
     public TMP_Text growthProgressText;
-    public Slider growthProgressSlider;
+    public GameObject blackScreen;
     private GameState gameState;
     private double timeSpentInState = 0.0f;
+    bool isFadeInFromBlack = true;
+    public float fadeInSpeed = 2.0f;
 
     public void Start()
     {
@@ -37,9 +39,9 @@ public class GameControllerScript : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                SceneManager.LoadScene(
-                    SceneManager.GetActiveScene().name
-                );
+                var levelName = SceneManager.GetActiveScene().name;
+                SceneManager.UnloadScene(levelName);
+                SceneManager.LoadScene(levelName);
             }
         }
     }
@@ -61,6 +63,9 @@ public class GameControllerScript : MonoBehaviour
                 waitForInputAndRestartScene();
                 break;
         }
+        if (isFadeInFromBlack) {
+            fadeInFromBlack();
+        }
     }
 
     public void ResetLevel()
@@ -68,6 +73,9 @@ public class GameControllerScript : MonoBehaviour
         gameState = GameState.GameRunning;
         gameOverScreen.SetActive(false);
         levelFinishScreen.SetActive(false);
+        blackScreen.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
+        isFadeInFromBlack = true;
+
     }
 
     public void UpdateGrowthProgressInfo(int size)
@@ -97,6 +105,17 @@ public class GameControllerScript : MonoBehaviour
         gameState = GameState.LevelFinished;
         levelFinishScreen.SetActive(true);
         Debug.Log("Level finished.");
+    }
+
+    private void fadeInFromBlack()
+    {
+        var alpha = 1.0f - Mathf.Min(Mathf.Pow(Time.time * fadeInSpeed, 2.0f), 1.0f);
+        blackScreen.GetComponent<CanvasRenderer>().SetAlpha(alpha);
+        if (alpha == 0.0f)
+        {
+            isFadeInFromBlack = false;
+            blackScreen.GetComponent<CanvasRenderer>().SetAlpha(0.0f);
+        }
     }
 
 }
