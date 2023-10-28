@@ -7,6 +7,7 @@ public class TitleScreenScript : MonoBehaviour
 {
     public GameObject blackScreen;
     public float fadeInSpeed = 0.5f;
+    public AudioSource titleMusic;
 
     void Start()
     {
@@ -21,8 +22,12 @@ public class TitleScreenScript : MonoBehaviour
 
         if (alpha < 0.01f)
         {
+            if (!titleMusic.isPlaying) {
+                titleMusic.Play();
+            }
             if (Input.GetKeyDown(KeyCode.Return))
             {
+                titleMusic.Stop();
                 Debug.Log("Starting 1th level.");
                 SceneManager.UnloadScene(SceneManager.GetActiveScene().name);
                 SceneManager.LoadScene("Level01");
