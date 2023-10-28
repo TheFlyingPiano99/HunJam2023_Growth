@@ -26,7 +26,7 @@ public class PlayerControler : MonoBehaviour
 
     private void Grounded()
     {
-        if(Physics.CheckSphere(this.transform.position + Vector3.down,0.2f, layerMask))
+        if(Physics.CheckSphere(this.transform.position + Vector3.down*this.transform.localScale.x,0.2f, layerMask))
         {
             this.grounded = false;
         }
