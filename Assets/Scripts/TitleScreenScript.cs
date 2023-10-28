@@ -24,7 +24,7 @@ public class TitleScreenScript : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 Debug.Log("Starting 1th level.");
-                SceneManager.UnloadScene("TitleScreen");
+                SceneManager.UnloadScene(SceneManager.GetActiveScene().name);
                 SceneManager.LoadScene("Level01");
             }
         }

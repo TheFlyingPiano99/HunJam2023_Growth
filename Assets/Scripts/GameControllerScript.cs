@@ -27,6 +27,7 @@ public class GameControllerScript : MonoBehaviour
     bool isFadeInFromBlack = true;
     public float fadeInSpeed = 2.0f;
     public AudioSource winAudio;
+    public AudioSource gameOverAudio;
 
     public void Start()
     {
@@ -76,7 +77,8 @@ public class GameControllerScript : MonoBehaviour
         levelFinishScreen.SetActive(false);
         blackScreen.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
         isFadeInFromBlack = true;
-
+        winAudio.Stop();
+        gameOverAudio.Stop();
     }
 
     public void UpdateGrowthProgressInfo(int size)
@@ -94,6 +96,7 @@ public class GameControllerScript : MonoBehaviour
         gameState = GameState.GameOver;
         timeSpentInState = 0.0;
         gameOverScreen.SetActive(true);
+        gameOverAudio.Play();
         Destroy(player);
         Debug.Log("Game Over triggered.");
     }
