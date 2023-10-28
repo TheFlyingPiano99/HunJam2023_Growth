@@ -57,6 +57,7 @@ public class GrowthScript : MonoBehaviour
 
         goalSize *= multiplicative;
         goalSize += additive;
+        gameController.GetComponent<GameControllerScript>().UpdateGrowthProgressInfo(goalSize);
     }
 
     public void PauseGrowth()
@@ -91,7 +92,6 @@ public class GrowthScript : MonoBehaviour
             gameObject.transform.position += new Vector3(0.0f, originalLocalScale.y * DerivalOfInterpolation() * Time.deltaTime, 0.0f);
             gameObject.transform.localScale = GetInterpolatedSize() * originalLocalScale;
         }
-        gameController.GetComponent<GameControllerScript>().UpdateGrowthProgressInfo(transitionInterpolator);
         // Test movement:
         gameObject.transform.position += new Vector3(
             0.0f,

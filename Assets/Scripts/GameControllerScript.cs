@@ -20,6 +20,7 @@ public class GameControllerScript : MonoBehaviour
     private GameObject player;
     public GameObject gameOverScreen;
     public GameObject levelFinishScreen;
+    public TMP_Text growthProgressText;
     public Slider growthProgressSlider;
     private GameState gameState;
     private double timeSpentInState = 0.0f;
@@ -69,15 +70,18 @@ public class GameControllerScript : MonoBehaviour
         levelFinishScreen.SetActive(false);
     }
 
-    public void UpdateGrowthProgressInfo(float interpolationVariable)
+    public void UpdateGrowthProgressInfo(int size)
     {
-        growthProgressSlider.value = interpolationVariable;
+        growthProgressText.text = "Growth: " + size.ToString();
     }
 
     public void TriggerGameOver()
     {
         if (GameState.GameOver == gameState) // Prevent multiple trigger if already in GameOver
             return;
+        if (GameState.LevelFinished == gameState) // Prevent Gem Over when finished level
+            return;
+
         gameState = GameState.GameOver;
         timeSpentInState = 0.0;
         gameOverScreen.SetActive(true);
