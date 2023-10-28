@@ -37,6 +37,9 @@ public class PickingUpGrowthBerryScript : MonoBehaviour
                         script.Grow(0, growthParamterer);
                         break;
                 }
+                var tuneSource = GameObject.Find("PickUpTune").GetComponent<AudioSource>();
+                tuneSource.Play();
+
                 Destroy(gameObject);
             }
             else
