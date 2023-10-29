@@ -24,6 +24,7 @@ public class KillingRoofScript : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             Debug.Log("Player killed by overgrowing.");
+            gameObject.GetComponent<AudioSource>().Play();
             gameController.GetComponent<GameControllerScript>().TriggerGameOver();
         }
     }
