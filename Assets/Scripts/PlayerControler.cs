@@ -14,7 +14,7 @@ public class PlayerControler : MonoBehaviour
     private bool isPreparingToJump = true;
     private float jumpTimer = 0.0f;
     private bool isJumping = false;
-
+    public float animationSpeedMultiplier = 4.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -70,9 +70,13 @@ public class PlayerControler : MonoBehaviour
         float horizontalAxis = Input.GetAxis("Horizontal");
 
         Vector3 movementDirection = this.transform.forward * veticlaAxis + this.transform.right * horizontalAxis;
+        if (movementDirection.magnitude > 0.1f && !isJumping)
+        {
+            anim.speed = 1.0f / transform.localScale.y * animationSpeedMultiplier;
+        }
         movementDirection.Normalize();
 
-        this.transform.position += movementDirection * walkSpeed * Time.deltaTime;
+        this.transform.position += movementDirection * walkSpeed * animationSpeedMultiplier * Time.deltaTime;
         this.anim.SetFloat("vertical", veticlaAxis);
         this.anim.SetFloat("horizontal", horizontalAxis);
     }
