@@ -5,6 +5,7 @@ using UnityEngine;
 public class Opendoor : MonoBehaviour
 {
     bool Isoppen =false;
+    bool isLocked = true;
     
     // Start is called before the first frame update
     void Start()
@@ -12,7 +13,13 @@ public class Opendoor : MonoBehaviour
         
     }
 
-    void Open_Door()
+    public void UnlockDoor()
+    {
+        isLocked = false;
+        GameObject.Find("door-squeak").GetComponent<AudioSource>().Play();
+    }
+
+    private void Open_Door()
     {
         float angle = 30 * Time.deltaTime;
         if(this.transform.rotation.eulerAngles.y<=90)
@@ -22,7 +29,9 @@ public class Opendoor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if(Isoppen)
+        if (!isLocked)
+        {
             Open_Door();
+        }
     }
 }

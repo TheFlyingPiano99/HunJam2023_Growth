@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class KillingRoofScript : MonoBehaviour
 {
-    public GameObject gameController;
+    private GameObject gameController;
 
     // Start is called before the first frame update
     void Start()

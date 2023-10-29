@@ -10,17 +10,17 @@ public class PickUpKeyScript : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            var script = other.gameObject.GetComponent<GrowthScript>();
-            if (null != script)
+            Opendoor doorScript = GameObject.Find("DOOR").GetComponent<Opendoor>();
+            if (null != doorScript)
             {
                 var tuneSource = GameObject.Find("PickUpTune").GetComponent<AudioSource>();
                 tuneSource.Play();
-
+                doorScript.UnlockDoor();
                 Destroy(gameObject);
             }
             else
             {
-                Debug.LogError("Collision between key and player but no GrowthScript found!");
+                Debug.LogError("Collision between key and player but no Dooropen script found!");
             }
         }
     }
