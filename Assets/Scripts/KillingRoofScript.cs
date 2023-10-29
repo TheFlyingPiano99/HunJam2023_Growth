@@ -10,14 +10,13 @@ public class KillingRoofScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameController = GameObject.FindGameObjectsWithTag("GameController")[0];
+        if (gameController == null)
+        {
+            Debug.LogError("Controller is null!");
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void OnTriggerEnter(Collider other)
     {

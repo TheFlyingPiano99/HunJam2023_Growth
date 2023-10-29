@@ -4,20 +4,25 @@ using UnityEngine;
 
 public class CameraControler : MonoBehaviour
 {
-    public PlayerControler player;
+    private PlayerControler player;
     private float sensitvity = 500f;
     private float clamAngel = 40f;
 
     private float verticalRotation;
     private float horizontalRotation;
 
-    private void Start()
+    public void Start()
     {
+        player = gameObject.GetComponentInParent<PlayerControler>();
+        if (player == null)
+        {
+            Debug.LogError("Player null");
+        }
         this.verticalRotation = this.transform.localEulerAngles.x;
         this.horizontalRotation = this.transform.localEulerAngles.y;
     }
 
-    private void Update()
+    public void Update()
     {
         Look();
         Debug.DrawRay(this.transform.position, this.transform.forward * 2, Color.red);

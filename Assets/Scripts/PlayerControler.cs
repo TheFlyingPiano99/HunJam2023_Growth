@@ -9,7 +9,7 @@ public class PlayerControler : MonoBehaviour
     public LayerMask layerMask;
     public bool grounded;
     public float walkSpeed = 2.0f;
-    public float jumpDuration = 2.55f;
+    public float jumpDuration = 1.9f;
     public float jumpPrepareDuration = 0.4f;
     private bool isPreparingToJump = true;
     private float jumpTimer = 0.0f;
@@ -33,17 +33,17 @@ public class PlayerControler : MonoBehaviour
         if (isJumping)
         {
             jumpTimer += Time.deltaTime;
-            if (isPreparingToJump && jumpPrepareDuration * transform.localScale.y <= jumpTimer)
+            if (isPreparingToJump && jumpPrepareDuration / animationSpeedMultiplier <= jumpTimer)
             {
                 isPreparingToJump = false;
-                var xMax = transform.localScale.y * 1.25f;
+                var xMax =  transform.localScale.y * 1.5f;
                 this.rb.AddForce(
                     Vector3.up * GetImpulseForHeight(xMax, gameObject.GetComponent<Rigidbody>().mass),
                     ForceMode.Impulse
                 );
                 this.anim.SetBool("jump", false);   // Control animation (Setting here to prevent multiple jump anims)
             }
-            else if (jumpDuration * transform.localScale.y <= jumpTimer)
+            else if (jumpDuration / animationSpeedMultiplier <= jumpTimer)
             {
                 jumpTimer = 0.0f;
                 isJumping = false;
@@ -62,7 +62,12 @@ public class PlayerControler : MonoBehaviour
 
     private void Grounded()
     {
-        this.grounded = Physics.CheckSphere(this.transform.position + Vector3.down * (this.transform.localScale.y), 0.4f, layerMask);
+        var size = gameObject.GetComponent<GrowthScript>().GetInterpolatedSize();
+        this.grounded = Physics.CheckSphere(
+            this.transform.position + Vector3.down * size,
+            size * 0.25f,
+            layerMask
+        );
     }
     private void Move()
     {
@@ -70,13 +75,18 @@ public class PlayerControler : MonoBehaviour
         float horizontalAxis = Input.GetAxis("Horizontal");
 
         Vector3 movementDirection = this.transform.forward * veticlaAxis + this.transform.right * horizontalAxis;
-        if (movementDirection.magnitude > 0.1f && !isJumping)
-        {
-            anim.speed = 1.0f / transform.localScale.y * animationSpeedMultiplier;
-        }
-        movementDirection.Normalize();
 
-        this.transform.position += movementDirection * walkSpeed * animationSpeedMultiplier * Time.deltaTime;
+        var rigidBody = this.GetComponent<Rigidbody>();
+        var size = gameObject.GetComponent<GrowthScript>().GetInterpolatedSize();
+        var v = movementDirection * walkSpeed * animationSpeedMultiplier * size;
+        if (!isJumping || isJumping && isPreparingToJump)
+        {
+            rigidBody.velocity = new Vector3(v.x, rigidBody.velocity.y, v.z);
+        }
+        else
+        {
+            rigidBody.velocity = new Vector3(0.5f * v.x, rigidBody.velocity.y, 0.5f * v.z);
+        }
         this.anim.SetFloat("vertical", veticlaAxis);
         this.anim.SetFloat("horizontal", horizontalAxis);
     }
@@ -84,7 +94,7 @@ public class PlayerControler : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        anim.speed = 1.0f / transform.localScale.y;
+        anim.speed = animationSpeedMultiplier;
         Grounded();
         Jump();
         Move();
