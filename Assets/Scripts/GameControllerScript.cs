@@ -37,6 +37,7 @@ public class GameControllerScript : MonoBehaviour
     public void Start()
     {
         player = GameObject.FindWithTag("Player");
+        Cursor.visible = false;
         ResetLevel();
     }
 

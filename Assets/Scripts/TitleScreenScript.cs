@@ -12,6 +12,11 @@ public class TitleScreenScript : MonoBehaviour
     void Start()
     {
         blackScreen.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
+        Cursor.visible = false;
+        if (!titleMusic.isPlaying)
+        {
+            titleMusic.Play();
+        }
     }
 
     void Update()
@@ -22,9 +27,6 @@ public class TitleScreenScript : MonoBehaviour
 
         if (alpha < 0.01f)
         {
-            if (!titleMusic.isPlaying) {
-                titleMusic.Play();
-            }
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 titleMusic.Stop();
