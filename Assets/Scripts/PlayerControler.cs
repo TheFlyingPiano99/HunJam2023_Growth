@@ -14,7 +14,7 @@ public class PlayerControler : MonoBehaviour
     private bool isPreparingToJump = true;
     private float jumpTimer = 0.0f;
     private bool isJumping = false;
-    public float animationSpeedMultiplier = 4.0f;
+    public float animationSpeedMultiplier = 1.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -22,9 +22,8 @@ public class PlayerControler : MonoBehaviour
         this.rb = GetComponent<Rigidbody>();
     }
 
-    private float GetImpulseForHeight(float height, float mass)
+    private float GetImpulseForHeight(float height, float mass, float g)
     {
-        var g = 9.8f;
         return Mathf.Sqrt(2.0f * g * height) * mass;
     }
 
@@ -35,12 +34,16 @@ public class PlayerControler : MonoBehaviour
             jumpTimer += Time.deltaTime;
             if (isPreparingToJump && jumpPrepareDuration / animationSpeedMultiplier <= jumpTimer)
             {
+                var size = gameObject.GetComponent<GrowthScript>().GetInterpolatedSize();
                 isPreparingToJump = false;
-                var xMax =  transform.localScale.y * 1.5f;
-                this.rb.AddForce(
-                    Vector3.up * GetImpulseForHeight(xMax, gameObject.GetComponent<Rigidbody>().mass),
-                    ForceMode.Impulse
-                );
+                var xMax = size * 1.5f;
+                var animTime = 0.5f * (jumpDuration - jumpPrepareDuration) / animationSpeedMultiplier;
+                var g = 8.0f * xMax / animTime / animTime;
+                Physics.gravity = g * new Vector3(0, -1, 0);
+                var m = gameObject.GetComponent<Rigidbody>().mass;
+                var p = GetImpulseForHeight(xMax, m, g);
+                this.rb.AddForce(Vector3.up * p, ForceMode.Impulse);
+
                 this.anim.SetBool("jump", false);   // Control animation (Setting here to prevent multiple jump anims)
             }
             else if (jumpDuration / animationSpeedMultiplier <= jumpTimer)
@@ -79,22 +82,27 @@ public class PlayerControler : MonoBehaviour
         var rigidBody = this.GetComponent<Rigidbody>();
         var size = gameObject.GetComponent<GrowthScript>().GetInterpolatedSize();
         var v = movementDirection * walkSpeed * animationSpeedMultiplier * size;
-        if (!isJumping || isJumping && isPreparingToJump)
+        if (this.grounded && (!isJumping || isJumping && isPreparingToJump))
         {
+            anim.speed = animationSpeedMultiplier * walkSpeed / 2.0f;
             rigidBody.velocity = new Vector3(v.x, rigidBody.velocity.y, v.z);
+            this.anim.SetFloat("vertical", veticlaAxis);
+            this.anim.SetFloat("horizontal", horizontalAxis);
         }
         else
         {
             rigidBody.velocity = new Vector3(0.5f * v.x, rigidBody.velocity.y, 0.5f * v.z);
+            this.anim.SetFloat("vertical", 0.5f * veticlaAxis);
+            this.anim.SetFloat("horizontal", 0.5f * horizontalAxis);
         }
-        this.anim.SetFloat("vertical", veticlaAxis);
-        this.anim.SetFloat("horizontal", horizontalAxis);
     }
 
     // Update is called once per frame
     private void Update()
     {
+        var size = gameObject.GetComponent<GrowthScript>().GetInterpolatedSize();
         anim.speed = animationSpeedMultiplier;
+        gameObject.GetComponent<Rigidbody>().mass = Mathf.Pow(size, 3);
         Grounded();
         Jump();
         Move();

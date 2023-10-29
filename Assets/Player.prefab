@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1290861139720274705}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -207,7 +207,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   grounded: 0
-  walkSpeed: 2
+  walkSpeed: 3
   jumpDuration: 1.9
   jumpPrepareDuration: 0.4
   animationSpeedMultiplier: 1

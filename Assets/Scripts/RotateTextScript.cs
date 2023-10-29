@@ -7,7 +7,14 @@ public class RotateTextScript : MonoBehaviour
 
     void LateUpdate()
     {
-        transform.LookAt(transform.position + Camera.current.transform.rotation  * Vector3.forward,
-            Camera.current.GetComponent<Camera>().transform.rotation * Vector3.up);
+        var cam = Camera.main;
+        if (cam == null)
+        {
+            Debug.LogError("No camera!");
+        }
+        transform.LookAt(
+            transform.position + cam.transform.rotation * Vector3.forward,
+            cam.transform.rotation * Vector3.up
+        );
     }
 }
