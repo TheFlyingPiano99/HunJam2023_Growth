@@ -16,6 +16,7 @@ public class Opendoor : MonoBehaviour
     public void UnlockDoor()
     {
         isLocked = false;
+        GameObject.Find("door-squeak").GetComponent<AudioSource>().Play();
     }
 
     private void Open_Door()
