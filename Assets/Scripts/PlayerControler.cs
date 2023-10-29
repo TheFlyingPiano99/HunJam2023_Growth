@@ -16,24 +16,22 @@ public class PlayerControler : MonoBehaviour
 
     private void Jump()
     {
-        if(Input.GetKeyDown(KeyCode.Space)&& this.grounded)
+        if(Input.GetKeyDown(KeyCode.Space))
         {
+            this.grounded = true;
             this.rb.AddForce(Vector3.up * 5, ForceMode.Impulse);
-            this.anim.SetBool("jump", true);
+            this.anim.SetBool("jump", this.grounded);
         }
     }
 
     private void Grounded()
     {
-        if(Physics.CheckSphere(this.transform.position + Vector3.down,0.2f, layerMask))
-        {
-            this.grounded = true;
-        }
-        else
+        if(Physics.CheckSphere(this.transform.position + Vector3.down*this.transform.localScale.x,0.2f, layerMask))
         {
             this.grounded = false;
         }
-        
+
+        this.anim.SetBool("jump", this.grounded);
     }
     private void Move()
     {
