@@ -8,46 +8,79 @@ public class PlayerControler : MonoBehaviour
     private Rigidbody rb;
     public LayerMask layerMask;
     public bool grounded;
+    public float walkSpeed = 2.0f;
+    public float jumpDuration = 2.55f;
+    public float jumpPrepareDuration = 0.4f;
+    private bool isPreparingToJump = true;
+    private float jumpTimer = 0.0f;
+    private bool isJumping = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
         this.rb = GetComponent<Rigidbody>();
     }
 
+    private float GetImpulseForHeight(float height, float mass)
+    {
+        var g = 9.8f;
+        return Mathf.Sqrt(2.0f * g * height) * mass;
+    }
+
     private void Jump()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (isJumping)
         {
-            this.grounded = true;
-            this.rb.AddForce(Vector3.up * 5, ForceMode.Impulse);
-            this.anim.SetBool("jump", this.grounded);
+            jumpTimer += Time.deltaTime;
+            if (isPreparingToJump && jumpPrepareDuration * transform.localScale.y <= jumpTimer)
+            {
+                isPreparingToJump = false;
+                var xMax = transform.localScale.y * 1.25f;
+                this.rb.AddForce(
+                    Vector3.up * GetImpulseForHeight(xMax, gameObject.GetComponent<Rigidbody>().mass),
+                    ForceMode.Impulse
+                );
+                this.anim.SetBool("jump", false);   // Control animation (Setting here to prevent multiple jump anims)
+            }
+            else if (jumpDuration * transform.localScale.y <= jumpTimer)
+            {
+                jumpTimer = 0.0f;
+                isJumping = false;
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && this.grounded)
+            {
+                isJumping = true;
+                isPreparingToJump = true;
+                this.anim.SetBool("jump", true);   // Control animation
+            }
         }
     }
 
     private void Grounded()
     {
-        if(Physics.CheckSphere(this.transform.position + Vector3.down*this.transform.localScale.x,0.2f, layerMask))
-        {
-            this.grounded = false;
-        }
-
-        this.anim.SetBool("jump", this.grounded);
+        this.grounded = Physics.CheckSphere(this.transform.position + Vector3.down * (this.transform.localScale.y), 0.4f, layerMask);
     }
     private void Move()
     {
         float veticlaAxis = Input.GetAxis("Vertical");
         float horizontalAxis = Input.GetAxis("Horizontal");
 
-        Vector3 movment = this.transform.forward * veticlaAxis + this.transform.right * horizontalAxis;
-        movment.Normalize();
+        Vector3 movementDirection = this.transform.forward * veticlaAxis + this.transform.right * horizontalAxis;
+        movementDirection.Normalize();
 
-        this.transform.position += movment * 0.04f;
+        this.transform.position += movementDirection * walkSpeed * Time.deltaTime;
         this.anim.SetFloat("vertical", veticlaAxis);
         this.anim.SetFloat("horizontal", horizontalAxis);
     }
+
     // Update is called once per frame
-    private void FixedUpdate()
+    private void Update()
     {
+        anim.speed = 1.0f / transform.localScale.y;
         Grounded();
         Jump();
         Move();

@@ -29,6 +29,7 @@ public class GameControllerScript : MonoBehaviour
     public AudioSource winAudio;
     public AudioSource gameOverAudio;
     public AudioSource ambientMusic;
+    public GameObject roomPrefab;
 
     public void Start()
     {
@@ -81,6 +82,7 @@ public class GameControllerScript : MonoBehaviour
         winAudio.Stop();
         gameOverAudio.Stop();
         ambientMusic.Play();
+        Instantiate(roomPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
     }
 
     public void UpdateGrowthProgressInfo(int size)
