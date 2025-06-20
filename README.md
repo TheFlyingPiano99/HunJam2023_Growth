@@ -1,4 +1,4 @@
-#Growth
+# Growth
 ![image](https://github.com/user-attachments/assets/2c4a544e-c6ac-4bfe-85f6-c0f87dcb9781)
 **Growth** is a 3D platformer-puzzle game made in Unity  for **HunJam 2023**, where players must collect mystical **growth berries** to escape a series of trap-filled rooms. Each berry collected changes the player's scale, unlocking new paths and altering how the player interacts with the environment.
 
